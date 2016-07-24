@@ -1,3 +1,11 @@
+
+# tss_test.py
+# this is a script that will test to see if everything with the
+# YEI Three-space sensor is working properly.
+# TODO:
+# make it more intellegient so it will automatically known what port
+# the tss is connected to.
+
 #!/usr/bin/env python2
 import threespace as ts_api
 
