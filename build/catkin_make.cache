@@ -1,0 +1,2 @@
+
+-DCATKIN_DEVEL_PREFIX=/home/talon/rws/devel -DCMAKE_INSTALL_PREFIX=/home/talon/rws/install -G Unix Makefiles
