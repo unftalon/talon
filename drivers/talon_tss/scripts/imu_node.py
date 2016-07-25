@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# tss_test2.py this is a ROS node that will make sure everything is working properly.
+# imu_node.py this is a ROS node that publish raw IMU data.
 # TODO: 
 # 	-make it more intellegient so it will automatically known what port the tss is connected to.
 # 	-figure out if it is necessary to use device.close() anywhere.
