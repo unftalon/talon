@@ -14,7 +14,6 @@ import rospy
 from sensor_msgs.msg import Imu
 import sys
 import time
-from std_msgs.msg import String
 import threespace as ts_api
 
 # open the device
