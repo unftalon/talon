@@ -51,6 +51,18 @@ def tss_node():
 		imuMsg.orientation.z = orientation[2]
 		imuMsg.orientation.w = orientation[3]
 		
+		linear_acceleration = list(device.getRawAccelerometerData())
+		
+		imuMsg.linear_acceleration.x = linear_acceleration[0]
+		imuMsg.linear_acceleration.y = linear_acceleration[1]
+		imuMsg.linear_acceleration.z = linear_acceleration[2]
+		
+		angular_velocity = list(device.getRawGyroscopeRate())
+		
+		imuMsg.angular_velocity.x = angular_velocity[0]
+		imuMsg.angular_velocity.y = angular_velocity[1]
+		imuMsg.angular_velocity.z = angular_velocity[2]
+		
 		# Finally, publish the data
 		pub.publish(imuMsg)
 		
