@@ -4,7 +4,7 @@
  *
  * This sketch runs through a test sequence for the thrusters and communicates statuses to ROS.
  * 
- * Currently designed for Arduino Uno for the configuration on the TALON I sub
+ * Currently designed for Teensy 3.2 for the configuration on the TALON I sub
  *
  * For the full tutorial write up, visit
  * www.ros.org/wiki/rosserial_arduino_demos
@@ -22,11 +22,11 @@
 
 // define the thruster pin assignments. if you are confused about what these words are, you need to get your sea legs!
 #define TH_BOW_SWAY 3
-#define TH_BOW_HEAVE 5
-#define TH_PORT_SURGE 6
-#define TH_STARBOARD_SURGE 9
-#define TH_STERN_SWAY 10
-#define TH_STERN_HEAVE 11
+#define TH_BOW_HEAVE 4
+#define TH_PORT_SURGE 5
+#define TH_STARBOARD_SURGE 6
+#define TH_STERN_SWAY 9
+#define TH_STERN_HEAVE 10
 
 // onboard arduino LED
 #define statusLED 13
@@ -38,7 +38,7 @@ int ESC_initms = 1500;
 int ESC_initDelay = 1;
 
 // the amount of time between tests (in seconds)
-int test_delay = 3;
+int test_delay = 1.5;
 
 // the amount of time between ramp cycles (in milliseconds). This will slow the ramp down.
 int ramp_delay = 500;
