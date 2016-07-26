@@ -1,8 +1,10 @@
 /*
- * TALON I Thruster Command Sketch
+ * TALON Thruster Driver Sketch
  * derived from the rosserial Servo Control Example
  *
  * This sketch demonstrates the control of ESCs using ROS and Arduino
+ * 
+ * Currently designed for Arduino Uno for the configuration on the TALON I sub
  *
  * For the full tutorial write up, visit
  * www.ros.org/wiki/rosserial_arduino_demos
