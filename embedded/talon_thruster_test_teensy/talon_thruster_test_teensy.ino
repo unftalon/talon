@@ -41,7 +41,7 @@ int ESC_initDelay = 1;
 int test_delay = 1.5;
 
 // the amount of time between ramp cycles (in milliseconds). This will slow the ramp down.
-int ramp_delay = 500;
+int ramp_delay = 100;
 
 // Instantiate the node handle, allows us to create publishers and subscribers
 //ros::NodeHandle  nh;
@@ -139,6 +139,7 @@ void initESCs() {
 void thrusterTest() {
   // thrusterTest methods here
 
+  
   // HEAVE PAIR
   for (int i = 1500 ; i <= 1900; i += 100) {
     ESC_BOW_HEAVE.writeMicroseconds(i);
@@ -207,6 +208,10 @@ void setup() {
   // setup our favorite built in LED for diagnostic purposes.
   pinMode(statusLED, OUTPUT);
   Serial.begin(9600);
+
+  // this is needed on the Teensy because the serial port isn't open during Setup() for some reason.
+  // so this makes us wait until the port is open before proceeding.
+  while (!Serial);
   
   // initialize ROS node handle, advertise any topics being published and subscribe to any topics we want to listen to
   //nh.initNode();
