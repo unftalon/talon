@@ -4,7 +4,7 @@
 */
 
 #include <MS5837.h>
-#include <Wire.h>
+#include <i2c_t3.h>
 
 MS5837 bar30;
 
@@ -15,29 +15,29 @@ void setup() {
 
   Wire.begin();
 
-  sensor.init();
+  bar30.init();
 
-  sensor.setFluidDensity(997); // kg/m^3 (997 freshwater, 1029 for seawater)
+  bar30.setFluidDensity(1); // kg/m^3 (997 freshwater, 1029 for seawater)
 
 }
 
 void loop() {
-  sensor.read();
+  bar30.read();
 
   Serial.print("Pressure: ");
-  Serial.print(sensor.pressure());
+  Serial.print(bar30.pressure());
   Serial.println(" mbar");
 
   Serial.print("Temperature: ");
-  Serial.print(sensor.temperature());
+  Serial.print(bar30.temperature());
   Serial.println(" deg C");
 
   Serial.print("Depth: ");
-  Serial.print(sensor.depth());
+  Serial.print(bar30.depth());
   Serial.println(" m");
 
   Serial.print("Altitude: ");
-  Serial.print(sensor.altitude());
+  Serial.print(bar30.altitude());
   Serial.println(" m above mean sea level");
 
   delay(1000);
