@@ -21,12 +21,12 @@
 //#include <geometry_msgs/Twist.h>
 
 // define the thruster pin assignments. if you are confused about what these words are, you need to get your sea legs!
-#define TH_BOW_SWAY 3
-#define TH_BOW_HEAVE 4
-#define TH_PORT_SURGE 5
-#define TH_STARBOARD_SURGE 6
-#define TH_STERN_SWAY 9
-#define TH_STERN_HEAVE 10
+#define TH_BOW_SWAY 3         // red
+#define TH_BOW_HEAVE 4        // white
+#define TH_PORT_SURGE 5       // blue
+#define TH_STARBOARD_SURGE 6  // green
+#define TH_STERN_SWAY 9       // yellow
+#define TH_STERN_HEAVE 10     // no color or orange
 
 // onboard arduino LED
 #define statusLED 13
