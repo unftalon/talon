@@ -17,8 +17,8 @@
 
 #include <Arduino.h>
 #include <Servo.h>
-//#include <ros.h>
-//#include <geometry_msgs/Twist.h>
+#include <ros.h>
+#include <geometry_msgs/Twist.h>
 
 // define the thruster pin assignments. if you are confused about what these words are, you need to get your sea legs!
 #define TH_BOW_SWAY 3         // red
@@ -44,7 +44,7 @@ int test_delay = 1.5;
 int ramp_delay = 100;
 
 // Instantiate the node handle, allows us to create publishers and subscribers
-//ros::NodeHandle  nh;
+ros::NodeHandle  nh;
 
 // create the servo instances, one for each ESC
 Servo ESC_BOW_SWAY;
@@ -55,10 +55,8 @@ Servo ESC_STERN_SWAY;
 Servo ESC_STERN_HEAVE;
 
 // create the callback function using the twist message type, then name it.
-//void servo_cb( const geometry_msgs::Twist& cmd_msg) {
+void thrust_cmd( const geometry_msgs::Twist& thrust_cmd_msg) {
 
-  /* ===== CURRENTLY CALLBACK IS NOT USED IN THIS SKETCH ====
-   *  WILL REMOVE LATER IF NOT USED
   // create variables for each controllable degree of freedom.
   //
   // NOTE: for TALON I, we only have 5DOF (no ROLL).
@@ -68,11 +66,10 @@ Servo ESC_STERN_HEAVE;
   //
   // also, I realized i'm not sure about angular+linear yet, lets do that later.
 
-  // for now this is getting commented out
-  // int LINEAR_Z_HEAVE = map(cmd_msg.linear.z, -180, 180, 1100, 1900);
-  // int LINEAR_X_SURGE = map(cmd_msg.linear.x, -180, 180, 1100, 1900);
-  // int LINEAR_Y_SWAY = map(cmd_msg.linear.y, -180, 180, 1100, 1900);
-  //int ANGULAR_Z_YAW = map(cmd_msg.angular.z, -180, 180, 1100, 1900);
+  int LINEAR_Z_HEAVE = map(thrust_cmd_msg.linear.z, -180, 180, 1100, 1900);
+  int LINEAR_X_SURGE = map(thrust_cmd_msg.linear.x, -180, 180, 1100, 1900);
+  int LINEAR_Y_SWAY = map(thrust_cmd_msg.linear.y, -180, 180, 1100, 1900);
+  int ANGULAR_Z_YAW = map(thrust_cmd_msg.angular.z, -180, 180, 1100, 1900);
 
   // send the commands to the thruster pairs.
 
@@ -93,13 +90,10 @@ Servo ESC_STERN_HEAVE;
 
   // blink the LED to say we got something
   digitalWrite(13, HIGH - digitalRead(13)); //toggle led
-  */
-//}
+}
 
 // setup the subscriber with topic name "NAME" and type "geometry_msgs" and the name of the cb function
-//ros::Subscriber<geometry_msgs::Twist> sub("servo", servo_cb);
-
-// arduino setup function, runs once.
+ros::Subscriber<geometry_msgs::Twist> sub("thrust", thrust_cmd);
 
 
 // for setting up the ESCs, using the servo library.
@@ -135,6 +129,10 @@ void initESCs() {
   Serial.println("Initialization delay...");
   delay(ESC_initDelay*1000);
 }
+
+
+
+
 
 void thrusterTest() {
   // thrusterTest methods here
@@ -214,8 +212,8 @@ void setup() {
   while (!Serial);
   
   // initialize ROS node handle, advertise any topics being published and subscribe to any topics we want to listen to
-  //nh.initNode();
-  //nh.subscribe(sub);
+  nh.initNode();
+  nh.subscribe(sub);
 
   // run the ESC init sequence
   initESCs();
@@ -228,6 +226,6 @@ void setup() {
 
 void loop() {
   // this keeps the node open
-  //nh.spinOnce();
-  //delay(1);
+  nh.spinOnce();
+  delay(1);
 }
