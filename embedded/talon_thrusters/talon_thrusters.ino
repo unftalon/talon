@@ -1,18 +1,18 @@
 /*
- * TALON Thruster Driver Sketch
- * derived from the rosserial Servo Control Example
- *
- * This sketch runs through a test sequence for the thrusters and communicates statuses to ROS.
- * 
- * Currently designed for Teensy 3.2 for the configuration on the TALON I sub
- *
- * For the full tutorial write up, visit
- * www.ros.org/wiki/rosserial_arduino_demos
- *
- * information on connecting and communicating with the Afro ESCs (known as Basic ESC from BlueRobotics)
- * can be found here:
- * http://docs.bluerobotics.com/besc/
- */
+   TALON Thruster Driver Sketch
+   derived from the rosserial Servo Control Example
+
+   This sketch runs through a test sequence for the thrusters and communicates statuses to ROS.
+
+   Currently designed for Teensy 3.2 for the configuration on the TALON I sub
+
+   For the full tutorial write up, visit
+   www.ros.org/wiki/rosserial_arduino_demos
+
+   information on connecting and communicating with the Afro ESCs (known as Basic ESC from BlueRobotics)
+   can be found here:
+   http://docs.bluerobotics.com/besc/
+*/
 
 
 #include <Arduino.h>
@@ -41,7 +41,11 @@ int ESC_initDelay = 1;
 int test_delay = 1.5;
 
 // the amount of time between ramp cycles (in milliseconds). This will slow the ramp down.
-int ramp_delay = 100;
+int ramp_delay = 100; \
+
+// something to check and see if the system is ready to accept commands
+// from the subscriber
+boolean system_initialized = false;
 
 // Instantiate the node handle, allows us to create publishers and subscribers
 ros::NodeHandle  nh;
@@ -66,30 +70,33 @@ void thrust_cmd( const geometry_msgs::Twist& thrust_cmd_msg) {
   //
   // also, I realized i'm not sure about angular+linear yet, lets do that later.
 
-  int LINEAR_Z_HEAVE = map(thrust_cmd_msg.linear.z, -180, 180, 1100, 1900);
-  int LINEAR_X_SURGE = map(thrust_cmd_msg.linear.x, -180, 180, 1100, 1900);
-  int LINEAR_Y_SWAY = map(thrust_cmd_msg.linear.y, -180, 180, 1100, 1900);
-  int ANGULAR_Z_YAW = map(thrust_cmd_msg.angular.z, -180, 180, 1100, 1900);
+  if (system_initialized == true) {
+    int LINEAR_Z_HEAVE = map(thrust_cmd_msg.linear.z, -180, 180, 1100, 1900);
+    int LINEAR_X_SURGE = map(thrust_cmd_msg.linear.x, -180, 180, 1100, 1900);
+    int LINEAR_Y_SWAY = map(thrust_cmd_msg.linear.y, -180, 180, 1100, 1900);
+    int ANGULAR_Z_YAW = map(thrust_cmd_msg.angular.z, -180, 180, 1100, 1900);
 
-  // send the commands to the thruster pairs.
+    // send the commands to the thruster pairs.
 
-  // HEAVE pair
-  ESC_BOW_HEAVE.writeMicroseconds(LINEAR_Z_HEAVE);
-  ESC_STERN_HEAVE.writeMicroseconds(LINEAR_Z_HEAVE);
+    // HEAVE pair
+    ESC_BOW_HEAVE.writeMicroseconds(LINEAR_Z_HEAVE);
+    ESC_STERN_HEAVE.writeMicroseconds(LINEAR_Z_HEAVE);
 
-  // SURGE pair
-  ESC_PORT_SURGE.writeMicroseconds(LINEAR_X_SURGE);
-  ESC_STARBOARD_SURGE.writeMicroseconds(LINEAR_X_SURGE);
+    // SURGE pair
+    ESC_PORT_SURGE.writeMicroseconds(LINEAR_X_SURGE);
+    ESC_STARBOARD_SURGE.writeMicroseconds(LINEAR_X_SURGE);
 
-  // SWAY pair
-  ESC_BOW_SWAY.writeMicroseconds(LINEAR_Y_SWAY);
-  ESC_STERN_SWAY.writeMicroseconds(LINEAR_Y_SWAY);
+    // SWAY pair
+    ESC_BOW_SWAY.writeMicroseconds(LINEAR_Y_SWAY);
+    ESC_STERN_SWAY.writeMicroseconds(LINEAR_Y_SWAY);
 
-  // YAW PAIR
-  // i don't think we can YAW yet
+    // YAW PAIR
+    // i don't think we can YAW yet
 
-  // blink the LED to say we got something
-  digitalWrite(13, HIGH - digitalRead(13)); //toggle led
+    // blink the LED to say we got something
+    digitalWrite(13, HIGH - digitalRead(13)); //toggle led
+  }
+
 }
 
 // setup the subscriber with topic name "NAME" and type "geometry_msgs" and the name of the cb function
@@ -120,14 +127,17 @@ void initESCs() {
   ESC_PORT_SURGE.writeMicroseconds(ESC_initms);
   ESC_STARBOARD_SURGE.writeMicroseconds(ESC_initms);
   Serial.println("PORT SURGE and STARBOARD SURGE Initialized...");
-  
+
   // SWAY pair
   ESC_BOW_SWAY.writeMicroseconds(ESC_initms);
   ESC_STERN_SWAY.writeMicroseconds(ESC_initms);
   Serial.println("BOW SWAY and STERN SWAY Initialized...");
 
   Serial.println("Initialization delay...");
-  delay(ESC_initDelay*1000);
+  delay(ESC_initDelay * 1000);
+
+  // toggle the status of the system so it can start receiving commands
+  system_initialized = !system_initialized;
 }
 
 
@@ -137,7 +147,7 @@ void initESCs() {
 void thrusterTest() {
   // thrusterTest methods here
 
-  
+
   // HEAVE PAIR
   for (int i = 1500 ; i <= 1900; i += 100) {
     ESC_BOW_HEAVE.writeMicroseconds(i);
@@ -145,8 +155,8 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  delay(test_delay*1000);
-  ESC_BOW_HEAVE.writeMicroseconds(1500);  
+  delay(test_delay * 1000);
+  ESC_BOW_HEAVE.writeMicroseconds(1500);
 
   for (int i = 1500 ; i <= 1900; i += 100) {
     ESC_STERN_HEAVE.writeMicroseconds(i);
@@ -154,8 +164,8 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  delay(test_delay*1000);
-  ESC_STERN_HEAVE.writeMicroseconds(1500);  
+  delay(test_delay * 1000);
+  ESC_STERN_HEAVE.writeMicroseconds(1500);
 
 
   // SURGE PAIR
@@ -165,8 +175,8 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  delay(test_delay*1000);
-  ESC_PORT_SURGE.writeMicroseconds(1500); 
+  delay(test_delay * 1000);
+  ESC_PORT_SURGE.writeMicroseconds(1500);
 
   for (int i = 1500 ; i <= 1900; i += 100) {
     ESC_STARBOARD_SURGE.writeMicroseconds(i);
@@ -174,8 +184,8 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  delay(test_delay*1000);
-  ESC_STARBOARD_SURGE.writeMicroseconds(1500); 
+  delay(test_delay * 1000);
+  ESC_STARBOARD_SURGE.writeMicroseconds(1500);
 
 
   // SWAY PAIR
@@ -185,8 +195,8 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  delay(test_delay*1000);
-  ESC_BOW_SWAY.writeMicroseconds(1500); 
+  delay(test_delay * 1000);
+  ESC_BOW_SWAY.writeMicroseconds(1500);
 
 
   for (int i = 1500 ; i <= 1900; i += 100) {
@@ -195,10 +205,10 @@ void thrusterTest() {
     Serial.println(i);
     delay(ramp_delay);
   }
-  ESC_STERN_SWAY.writeMicroseconds(1500); 
-  delay(test_delay*1000);
+  ESC_STERN_SWAY.writeMicroseconds(1500);
+  delay(test_delay * 1000);
 
-  
+
 }
 
 
@@ -210,17 +220,17 @@ void setup() {
   // this is needed on the Teensy because the serial port isn't open during Setup() for some reason.
   // so this makes us wait until the port is open before proceeding.
   while (!Serial);
-  
+
   // initialize ROS node handle, advertise any topics being published and subscribe to any topics we want to listen to
   nh.initNode();
   nh.subscribe(sub);
 
   // run the ESC init sequence
   initESCs();
-  thrusterTest();
-  
+  //thrusterTest();
 
-  
+
+
 
 }
 
