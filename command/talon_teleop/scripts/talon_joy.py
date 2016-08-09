@@ -1,4 +1,4 @@
-# teleop_joy.py
+# talon_teleop.py
 # ROS node that will subscribe to the joy node and pass the information along
 # as the proper data for interpretation.
 
@@ -18,26 +18,27 @@ joyToServoScale = 180
  
 # define the callback function to be called when something comes in from the subscription
 def callback(data):
-	twist = Twist()
+	cmd = Twist()
 	
 	# using the Twist type to get info from the joystick.
-	twist.linear.x = joyToServoScale*data.axes[3] 
-	pub.publish(twist)
+	# z = heave
+	# axes[3] is the flipper on the logitech joystick
+	cmd.linear.z = joyToServoScale*data.axes[3] 
+	pub.publish(cmd)
 	
  
-def joy_teleop():
+def talon_teleop():
 	# Initialize a ROS node
-	rospy.init_node('Joy_teleop')
+	rospy.init_node('talon_teleop')
 	
 	# set up a subscriber of the topic "joy", type "Joy" and assign the callback function "callback"
 	rospy.Subscriber("joy", Joy, callback)
 	
-	global pub # why "global pub"?
-	
 	# set up a publisher of topic "servo", type "Twist" and set a queue size
-	pub = rospy.Publisher('servo', Twist, queue_size=10)
+	global pub
+	pub = rospy.Publisher('thruster', Twist, queue_size=10)
  
-	# I don't remember what this is
+	# reduce the rate of the loop and keep it alive
 	r = rospy.Rate(10) # 10hz
 	while not rospy.is_shutdown():
 		r.sleep()
@@ -45,4 +46,4 @@ def joy_teleop():
 	rospy.spin()
  
 if __name__ == '__main__':
-	joy_teleop()
+	talon_teleop()
