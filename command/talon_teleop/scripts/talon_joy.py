@@ -24,7 +24,9 @@ def callback(data):
 	# using the Twist type to get info from the joystick.
 	# z = heave
 	# axes[3] is the flipper on the logitech joystick
-	cmd.linear.z = joyToServoScale*data.axes[3] 
+	cmd.linear.z = joyToServoScale*data.axes[3] # fliper, heave
+	cmd.linear.x = joyToServoScale*data.axes[1] # stick tilt, surge
+	cmd.linear.y = joyToServoScale*data.axes[0] # stick roll, sway
 	pub.publish(cmd)
 	
  
