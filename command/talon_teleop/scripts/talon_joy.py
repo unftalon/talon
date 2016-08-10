@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # talon_teleop.py
 # ROS node that will subscribe to the joy node and pass the information along
 # as the proper data for interpretation.
 
 
-#!/usr/bin/env python
+
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
@@ -36,7 +37,7 @@ def talon_teleop():
 	
 	# set up a publisher of topic "servo", type "Twist" and set a queue size
 	global pub
-	pub = rospy.Publisher('thruster', Twist, queue_size=10)
+	pub = rospy.Publisher('thrust', Twist, queue_size=10)
  
 	# reduce the rate of the loop and keep it alive
 	r = rospy.Rate(10) # 10hz
