@@ -3,11 +3,14 @@
 import rospy
 import sys
 import time
+from std_msgs.msg import String
 
 def odom_cb(msg):
 	'''
 	this is for getting the odometry data on subscribe
 	'''
+	
+	rospy.loginfo(rospy.get_caller_id() + "I head %s", msg.data)
 	
 def trajectory_cb(msg):
 	'''
@@ -27,4 +30,4 @@ def talon_controller():
 	rospy.spin()
 	
 if __name__ == '__main__':
-	talon_controller():
+	talon_controller()
