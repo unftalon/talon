@@ -24,8 +24,9 @@ def talon_controller():
 	
 	rospy.init_node('talon_controller', anonymous=False)
 	
-	rospy.Subscriber("odom", String, odom_cb)
-	rospy.Subscriber("trajectory", String, trajectory_cb)
+	rospy.Subscriber("odom", String, odom_cb, queue_size=1)
+	rospy.Subscriber("trajectory", String, trajectory_cb, queue_size=1)
+	rospy.Publisher("wrench", String, queue_size=1)
 	
 	rospy.spin()
 	
