@@ -14,6 +14,7 @@ def pid_tester():
 	rospy.init_node('pid_tester')
 
 	pub = rospy.Publisher('trajectory', Pose, queue_size=10)
+	print "PID Tester Started."
 	
 	
  
