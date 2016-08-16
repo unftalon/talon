@@ -28,6 +28,8 @@ class talon_control:
 		self.current_state = numpy.zeros(6)
 		self.current_velocity = numpy.zeros(6)
 		self.current_error = numpy.ones(0)
+		self.desired_pose = numpy.ones(3)
+		#self.desired_orientation = numpy.ones(4)
 		
 		# ROS components
 		rospy.Subscriber("odom", String, self.odom_cb, queue_size=1)
@@ -50,6 +52,8 @@ class talon_control:
 		
 		self.desired_pose = xyz_array(desired_trajectory.position) # desired pose
 		self.desired_orientation = xyzw_array(desired_trajectory.orientation) #desired orientation
+		
+		self.desired_state = numpy.concatenate([self.desired_pose, self.desired_orientation])
 
 		
 		
@@ -59,8 +63,9 @@ class talon_control:
 		'''
 		
 
-		
-
+		linear_error = self.desired_state[0:3]
+		angular_error = self.desired_state[3:6]
+		error_enu = numpy.concatenate([linear_error, angular_error])
 		
 		# this is our main thing
 		
@@ -73,8 +78,6 @@ class talon_control:
 		# combine into final wrench (for output)
 		
 		# publish values
-		#print self.desired_pose
-		self.controller_wrench.publish(desired_pose)
 		
 		
 		
