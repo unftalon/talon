@@ -2,7 +2,7 @@
 # camera vision node
 # TODO: 
 #    - give it a real name
-#    - make any image filtering settings parameterized or adjustable on the fly
+#    - make any image filtering settings parametrized or adjustable on the fly
 # 	
 # the goal of this node is to receive the raw image from the camera driver,
 # convert it to openCV format, apply any image filtering things,
