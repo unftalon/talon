@@ -6,7 +6,7 @@
 # This node will subscribe to raw camera imgages and apply filters for making them
 # easier to read by other services.
 #
-# TODO: 	
+# TODO: 	- put the actual filters in a separate module?
 #
 # written by Michael Otero
 # email: mike at unftalon.org
@@ -37,6 +37,8 @@ class fv_filter_server:
 		except CvBridgeError as e:
 			print(e)
 		
+		''' this is where the filter magic happens'''
+		
 		# this is a test modification. draws some circle on the top left of the image
 		(rows,cols,channels) = cv_image.shape
 		if cols > 60 and rows > 60 :
@@ -45,6 +47,7 @@ class fv_filter_server:
 		# create a window in the GUI to show the cv image
 		cv2.imshow("Image Window", cv_image)
 		cv2.waitKey(3)
+		''' filter magic happens above '''
 		
 		# try to convert the image back to ROS format and publish it.
 		try:
