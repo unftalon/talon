@@ -65,15 +65,18 @@ class fv_qgate_detect:
 		lower_green = np.array([hl,sl,vl])
 		upper_green = np.array([hu,su,vu])
 		
+		# threshold the HSV image to get only desired color
 		mask = cv2.inRange(hsv, lower_green, upper_green)
 		
 		bmask = cv2.GaussianBlur(mask, (5,5),0)
+		
+		res = cv2.bitwise_and(cv_image,cv_image, mask=mask)
 		
 		
 		
 
 		# create a window in the GUI to show the cv image
-		cv2.imshow("Image Window", bmask)
+		cv2.imshow("Image Window", res)
 		cv2.waitKey(3)		
 			
 			
