@@ -6,27 +6,20 @@
 
 
 import rospy
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Pose
 from sensor_msgs.msg import Joy
 import sys
 import time
 
-# this scales the joy input to a larger number.
-# for the case of arduino servo.h, set to 180 so it can be mapped to
-# the expected servo input of 0-180 (angle)
-# there is probably a better way to do this.
-joyToServoScale = 180
  
 # define the callback function to be called when something comes in from the subscription
 def callback(data):
-	cmd = Twist()
+	cmd = Pose()
 	
 	# using the Twist type to get info from the joystick.
 	# z = heave
 	# axes[3] is the flipper on the logitech joystick
-	cmd.linear.z = joyToServoScale*data.axes[3] # fliper, heave
-	cmd.linear.x = joyToServoScale*data.axes[1] # stick tilt, surge
-	cmd.linear.y = joyToServoScale*data.axes[0] # stick roll, sway
+	cmd.position.z = data.axes[3] # fliper, heave
 	pub.publish(cmd)
 	
  
@@ -39,7 +32,7 @@ def talon_teleop():
 	
 	# set up a publisher of topic "servo", type "Twist" and set a queue size
 	global pub
-	pub = rospy.Publisher('thrust', Twist, queue_size=10)
+	pub = rospy.Publisher('/command/pose', Pose, queue_size=10)
  
 	# reduce the rate of the loop and keep it alive
 	r = rospy.Rate(10) # 10hz
