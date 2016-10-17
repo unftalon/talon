@@ -30,6 +30,7 @@ class fv_qgate_detect:
 		
 		self.bridge = CvBridge()
 		
+		# removed to use fixed values for now
 		cv2.namedWindow('Trackbars')
 		cv2.createTrackbar('lower_hue','Trackbars',0,179, nothing)
 		cv2.createTrackbar('lower_sat','Trackbars',0,255, nothing)
@@ -37,6 +38,7 @@ class fv_qgate_detect:
 		cv2.createTrackbar('upper_hue','Trackbars',0,179, nothing)
 		cv2.createTrackbar('upper_sat','Trackbars',0,255, nothing)
 		cv2.createTrackbar('upper_val','Trackbars',0,255, nothing)
+		
 		
 	def callback(self, data):
 	
@@ -46,14 +48,27 @@ class fv_qgate_detect:
 		except CvBridgeError as e:
 			print(e)
 		
+		# get the trackbar pos for each value and set it to respective variables
+		# commented out to use fixed values for now
 		hl = cv2.getTrackbarPos('lower_hue','Trackbars')
 		sl = cv2.getTrackbarPos('lower_sat','Trackbars')
 		vl = cv2.getTrackbarPos('lower_val','Trackbars')
 		hu = cv2.getTrackbarPos('upper_hue','Trackbars')
 		su = cv2.getTrackbarPos('upper_sat','Trackbars')
 		vu = cv2.getTrackbarPos('upper_val','Trackbars')
+		'''
+		hl = 0
+		sl = 150
+		vl = 197
+		hu = 43
+		su = 121
+		vu = 255
+		'''
 		
+		# blur the image to reduce noise
 		blur = cv2.GaussianBlur(cv_image, (5,5),0)
+		
+		# convert the color space from BGR to HSV
 		hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 		
 		''' so far it looks like the red ball has the following upper and lower limits for HSV:
@@ -61,24 +76,69 @@ class fv_qgate_detect:
 			lower: 4,150,130
 			upper: 15,230,243
 			
+			here's the green sticky note stuck to my desk area
+			
+			lower: 24, 111, 173
+			upper: 57, 208, 255
+			
 		'''
+		
+		# assign the lower and upper ranges for the mask
 		lower_green = np.array([hl,sl,vl])
 		upper_green = np.array([hu,su,vu])
 		
-		# threshold the HSV image to get only desired color
+		# threshold the HSV image to get only desired color, this creates a 'mask'
 		mask = cv2.inRange(hsv, lower_green, upper_green)
 		
+		# blur the mask to reduce noise
 		bmask = cv2.GaussianBlur(mask, (5,5),0)
 		
+		# recomibine the pre-mask image and the positive values for the mask so that
+		# the original image appears through the mask (easier to see what is happening)
 		res = cv2.bitwise_and(cv_image,cv_image, mask=mask)
+		res = cv2.erode(res, None, iterations = 2)
+		res = cv2.dilate(res, None, iterations = 2)
 		
 		
+		###================================================= experimental code below
+		# see http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/ for source of below code. will be
+		# beter explained later
 		
+		# find contours in the mask and initialize the current
+		# (x, y) center of the ball
+		cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
+			cv2.CHAIN_APPROX_SIMPLE)[-2]
+		center = None
+ 
+		# only proceed if at least one contour was found
+		if len(cnts) > 0:
+			# find the largest contour in the mask, then use
+			# it to compute the minimum enclosing circle and
+			# centroid
+			c = max(cnts, key=cv2.contourArea)
+			((x, y), radius) = cv2.minEnclosingCircle(c)
+			M = cv2.moments(c)
+			center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+ 
+		# only proceed if the radius meets a minimum size
+			if radius > 10:
+				# draw the circle and centroid on the frame,
+				# then update the list of tracked points
+				cv2.circle(cv_image, (int(x), int(y)), int(radius),
+					(0, 255, 255), 2)
+				cv2.circle(cv_image, center, 5, (0, 0, 255), -1)
 
+		###================================================= experimental code above
+		
 		# create a window in the GUI to show the cv image
-		cv2.imshow("Image Window", res)
+		cv2.imshow("Image Window", cv_image)
 		cv2.waitKey(3)		
-			
+		
+		# try to convert the cv image to a ROS image and throw exception if it fails	
+		try:
+			self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+		except CvBridgeError as e:
+			print(e)
 			
 			
 def main(args):
