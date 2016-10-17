@@ -121,6 +121,8 @@ class fv_qgate_detect:
 				cv2.circle(cv_image, (int(x), int(y)), int(radius),
 					(0, 255, 255), 2)
 				cv2.circle(cv_image, center, 5, (0, 0, 255), -1)
+		else:
+			center = (-1,-1)
 
 		###================================================= experimental code above
 		
