@@ -126,17 +126,25 @@ class fv_qgate_detect:
 		
 		# create a window in the GUI to show the cv image
 		cv2.imshow("Image Window", cv_image)
-		cv2.waitKey(3)		
+		cv2.imshow("Mask window", res)
+		cv2.waitKey(3)
 		
 		
+		# instantiate Pose
+		coord = Pose()
 		
+		# assign values of coord to the coordinates
+		coord.position.x = center[0]
+		coord.position.y = center[1]
+		
+		# publish the coordinates of the circle that was generated
+		self.coord_pub.publish(coord)
 		
 		# try to convert the cv image to a ROS image and throw exception if it fails	
 		try:
 			self.image_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
 		except CvBridgeError as e:
 			print(e)
-			
 			
 def main(args):
 	fqd = fv_qgate_detect()
