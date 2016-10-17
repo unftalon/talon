@@ -1,6 +1,6 @@
 <launch>
 	<node pkg="talon_vision" type="fv_filter_server.py" name="fv_filter_server" />
-	<node pkg="talon_vision" type="fv_qgate_detect.py" name="fv_qgate_detect" />
+	<node pkg="talon_vision" type="fv_qgate_detect.py" name="fv_qgate_detect" output="screen"  />
 	
 	<!-- the below was copy & pasted from somewhere, and I do not yet undersand it all but it works -->
   <group ns="camera">
