@@ -15,6 +15,7 @@ import sys
 import rospy
 import cv2
 from sensor_msgs.msg import Image
+from geometry_msgs.msg import Pose
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 
@@ -27,10 +28,12 @@ class fv_qgate_detect:
 		# set up publisher and subscriber
 		self.image_pub = rospy.Publisher("/vision/fwd/qgate_mask", Image, queue_size=1)
 		self.image_sub = rospy.Subscriber("/vision/fwd/img_filtered", Image, self.callback)
+		self.coord_pub = rospy.Publisher("/vision/fwd/centerCoords", Pose, queue_size=10)
 		
+		# instantiate an instance of CvBridge
 		self.bridge = CvBridge()
 		
-		# removed to use fixed values for now
+		# create OpenCV GUI trackbars
 		cv2.namedWindow('Trackbars')
 		cv2.createTrackbar('lower_hue','Trackbars',0,179, nothing)
 		cv2.createTrackbar('lower_sat','Trackbars',0,255, nothing)
@@ -49,21 +52,12 @@ class fv_qgate_detect:
 			print(e)
 		
 		# get the trackbar pos for each value and set it to respective variables
-		# commented out to use fixed values for now
 		hl = cv2.getTrackbarPos('lower_hue','Trackbars')
 		sl = cv2.getTrackbarPos('lower_sat','Trackbars')
 		vl = cv2.getTrackbarPos('lower_val','Trackbars')
 		hu = cv2.getTrackbarPos('upper_hue','Trackbars')
 		su = cv2.getTrackbarPos('upper_sat','Trackbars')
 		vu = cv2.getTrackbarPos('upper_val','Trackbars')
-		'''
-		hl = 0
-		sl = 150
-		vl = 197
-		hu = 43
-		su = 121
-		vu = 255
-		'''
 		
 		# blur the image to reduce noise
 		blur = cv2.GaussianBlur(cv_image, (5,5),0)
@@ -133,6 +127,9 @@ class fv_qgate_detect:
 		# create a window in the GUI to show the cv image
 		cv2.imshow("Image Window", cv_image)
 		cv2.waitKey(3)		
+		
+		
+		
 		
 		# try to convert the cv image to a ROS image and throw exception if it fails	
 		try:
