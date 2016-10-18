@@ -19,21 +19,23 @@ from geometry_msgs.msg import Pose
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 
+# I don't remember why this is here, perhaps its nothing?
 def nothing(x):
 	pass
 
 class fv_qgate_detect:
 
 	def __init__(self):
-		# set up publisher and subscriber
+		# set up publishers and subscribers
 		self.image_pub = rospy.Publisher("/vision/fwd/qgate_mask", Image, queue_size=1)
 		self.image_sub = rospy.Subscriber("/vision/fwd/img_filtered", Image, self.callback)
 		self.coord_pub = rospy.Publisher("/vision/fwd/centerCoords", Pose, queue_size=10)
 		
-		# instantiate an instance of CvBridge
+		# instantiate CvBridge
 		self.bridge = CvBridge()
 		
 		# create OpenCV GUI trackbars
+		# TODO: learn what the "nothing" part does
 		cv2.namedWindow('Trackbars')
 		cv2.createTrackbar('lower_hue','Trackbars',0,179, nothing)
 		cv2.createTrackbar('lower_sat','Trackbars',0,255, nothing)
@@ -42,7 +44,7 @@ class fv_qgate_detect:
 		cv2.createTrackbar('upper_sat','Trackbars',0,255, nothing)
 		cv2.createTrackbar('upper_val','Trackbars',0,255, nothing)
 		
-		
+	# callback function is called every time information comes in from the img_filtered topic
 	def callback(self, data):
 	
 		# try to convert the ROS image to a cv image and throw exception if it fails
@@ -85,6 +87,7 @@ class fv_qgate_detect:
 		mask = cv2.inRange(hsv, lower_green, upper_green)
 		
 		# blur the mask to reduce noise
+		# NOTE: i think this got lost and is currently not being used (fix this)
 		bmask = cv2.GaussianBlur(mask, (5,5),0)
 		
 		# recomibine the pre-mask image and the positive values for the mask so that
@@ -97,6 +100,8 @@ class fv_qgate_detect:
 		###================================================= experimental code below
 		# see http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/ for source of below code. will be
 		# beter explained later
+		# the below variables and things should be adjusted to fit into this overall code better. they are
+		# copy pasted here and don't flow with everything else. 
 		
 		# find contours in the mask and initialize the current
 		# (x, y) center of the ball
@@ -127,6 +132,7 @@ class fv_qgate_detect:
 		###================================================= experimental code above
 		
 		# create a window in the GUI to show the cv image
+		# NOTE: this should be removed when fully implemented into ROS. output should be published and viewed with rqt
 		cv2.imshow("Image Window", cv_image)
 		cv2.imshow("Mask window", res)
 		cv2.waitKey(3)
