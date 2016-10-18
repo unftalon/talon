@@ -146,10 +146,12 @@ class fv_bouy_detect:
 		coord = Pose()
 		
 		# assign values of coord to the coordinates
+		# TODO: verify that the X and Y are not mixed up
 		coord.position.x = center[0]
 		coord.position.y = center[1]
 		
 		# publish the coordinates of the circle that was generated
+		# TODO: maybe filter this or reduce the rate at which it is published.
 		self.coord_pub.publish(coord)
 		
 		# try to convert the cv image to a ROS image and throw exception if it fails	
