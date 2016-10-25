@@ -6,6 +6,9 @@
  *    TODO:
  *    - set this up to command motors
  *    - set this up to get info from encoders (or maybe a teensy will do this?)
+ *    
+ *    some notes:
+ *    - will probably subscribe to a geometry_msgs/Twist topic and translate to motor movement
  */
 
 
