@@ -9,9 +9,9 @@
  */
 
 
-#include <ros.h>
-#include <AFMotor.h>
-// include any message types here
+#include <ros.h>     // include the ROS library so we can talk to the ROS network
+#include <AFMotor.h> // include the adafruit motor shield library
+// include any necessary message types here
 
 // ROS things ================================================
 ros::NodeHandle nh;
