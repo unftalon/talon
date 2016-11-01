@@ -37,7 +37,7 @@ geometry_msgs::Twist cmd_vel;
 int vel[6];
 
 // measure the width of the wheel base and divide that by two, then put it here.
-#define base_width 0.5; 
+#define base_width 1; 
 
 // create a motor object for each motor.
 AF_DCMotor motorLeft(3);  // define motor on channel 3 with 1KHz default PWM
