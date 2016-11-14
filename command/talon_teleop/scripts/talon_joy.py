@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # talon_teleop.py
 # ROS node that will subscribe to the joy node and pass the information along
 # as the proper data for interpretation.
 
 
-#!/usr/bin/env python
+
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
@@ -14,7 +15,7 @@ import time
 # for the case of arduino servo.h, set to 180 so it can be mapped to
 # the expected servo input of 0-180 (angle)
 # there is probably a better way to do this.
-joyToServoScale = 180
+joyToServoScale = 255
  
 # define the callback function to be called when something comes in from the subscription
 def callback(data):
@@ -23,7 +24,8 @@ def callback(data):
 	# using the Twist type to get info from the joystick.
 	# z = heave
 	# axes[3] is the flipper on the logitech joystick
-	cmd.linear.z = joyToServoScale*data.axes[3] 
+	cmd.linear.x = joyToServoScale*data.axes[3] 
+	cmd.angular.z = joyToServoScale*data.axes[2]
 	pub.publish(cmd)
 	
  
@@ -36,7 +38,7 @@ def talon_teleop():
 	
 	# set up a publisher of topic "servo", type "Twist" and set a queue size
 	global pub
-	pub = rospy.Publisher('thruster', Twist, queue_size=10)
+	pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
  
 	# reduce the rate of the loop and keep it alive
 	r = rospy.Rate(10) # 10hz
